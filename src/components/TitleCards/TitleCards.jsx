@@ -39,7 +39,11 @@ const TitleCards = ({ title, category }) => {
   useEffect(() => {
     fetch(`/api/movies?category=${category}`)
       .then((res) => res.json())
-      .then((data) => setApiData(data.results || []))
+      .then((data) => {
+  console.log("MOVIES API DATA:", data);
+  setApiData(data.results || []);
+})
+
       .catch((err) => console.error(err));
 
     const slider = cardsRef.current;
