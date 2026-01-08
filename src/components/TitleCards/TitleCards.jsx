@@ -37,13 +37,13 @@ const TitleCards = ({ title, category }) => {
   };
 
   useEffect(() => {
+    if (!category) return;
+
     fetch(`/api/movies?category=${category}`)
       .then((res) => res.json())
       .then((data) => {
-  console.log("MOVIES API DATA:", data);
-  setApiData(data.results || []);
-})
-
+        setApiData(data.results || []);
+      })
       .catch((err) => console.error(err));
 
     const slider = cardsRef.current;
@@ -80,23 +80,20 @@ const TitleCards = ({ title, category }) => {
           onMouseUp={stopDragging}
           onMouseLeave={stopDragging}
         >
-          {apiData.map(
-            (card) =>
-              card.backdrop_path && (
-                <Link
-                  to={`/player/${card.id}`}
-                  className="card"
-                  key={card.id}
-                >
-                  <img
-                    src={`https://image.tmdb.org/t/p/w500${card.backdrop_path}`}
-                    alt={card.original_title}
-                    draggable={false}
-                  />
-                  <p>{card.original_title}</p>
-                </Link>
-              )
-          )}
+          {apiData.map((card) => (
+            <Link
+              to={`/player/${card.id}`}
+              className="card"
+              key={card.id}
+            >
+              <img
+                src={`https://image.tmdb.org/t/p/w500${card.poster_path || card.backdrop_path}`}
+                alt={card.title || card.original_title || card.name}
+                draggable={false}
+              />
+              <p>{card.title || card.original_title || card.name}</p>
+            </Link>
+          ))}
         </div>
 
         <button className="arrow right" onClick={() => scrollByArrow(700)}>
