@@ -36,6 +36,8 @@ const Home = () => {
 
       {/* MOVIE ROWS (IMPORTANT: OUTSIDE HERO) */}
       <div className="more-cards">
+        <TitleCards title="Trending Now" category="trending/all/week" />
+        <TitleCards title="Top Rated" category="movie/top_rated" />
         <TitleCards title="Blockbuster Movies" category="movie/top_rated" />
         <TitleCards title="Only on Netflix" category="movie/popular" />
         <TitleCards title="Upcoming" category="movie/upcoming" />
