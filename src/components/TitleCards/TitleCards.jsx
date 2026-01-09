@@ -10,32 +10,39 @@ const TitleCards = ({ title, category }) => {
   const startX = useRef(0);
   const scrollStart = useRef(0);
 
-  // Mouse wheel → horizontal scroll
+ 
+    //  Pointer (Mouse + Touch)
+  const handlePointerDown = (e) => {
+    isDragging.current = true;
+    startX.current = e.clientX;
+    scrollStart.current = cardsRef.current.scrollLeft;
+    cardsRef.current.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isDragging.current) return;
+    const walk = e.clientX - startX.current;
+    cardsRef.current.scrollLeft = scrollStart.current - walk;
+  };
+
+  const handlePointerUp = (e) => {
+    isDragging.current = false;
+    try {
+      cardsRef.current.releasePointerCapture(e.pointerId);
+    } catch {}
+  };
+
+  
+    //  Mouse Wheel → Horizontal
+ 
   const handleWheel = (e) => {
     e.preventDefault();
     cardsRef.current.scrollLeft += e.deltaY;
   };
 
-  // Drag start
-  const handleMouseDown = (e) => {
-    isDragging.current = true;
-    startX.current = e.pageX;
-    scrollStart.current = cardsRef.current.scrollLeft;
-  };
 
-  // Drag move
-  const handleMouseMove = (e) => {
-    if (!isDragging.current) return;
-    e.preventDefault();
-    const walk = (e.pageX - startX.current) * 1.5;
-    cardsRef.current.scrollLeft = scrollStart.current - walk;
-  };
-
-  // Drag end
-  const stopDragging = () => {
-    isDragging.current = false;
-  };
-
+    //  Fetch Movies
+  
   useEffect(() => {
     if (!category) return;
 
@@ -56,6 +63,7 @@ const TitleCards = ({ title, category }) => {
     };
   }, [category]);
 
+// Arrow scroll
   const scrollByArrow = (value) => {
     cardsRef.current.scrollBy({
       left: value,
@@ -75,16 +83,17 @@ const TitleCards = ({ title, category }) => {
         <div
           className="card-list"
           ref={cardsRef}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={stopDragging}
-          onMouseLeave={stopDragging}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={handlePointerUp}
         >
           {apiData.map((card) => (
             <Link
               to={`/player/${card.id}`}
               className="card"
               key={card.id}
+              draggable={false}
             >
               <img
                 src={`https://image.tmdb.org/t/p/w500${card.poster_path || card.backdrop_path}`}
